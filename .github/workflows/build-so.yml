@@ -100,7 +100,8 @@ jobs:
     - name: Tar
       id: tar
       run: |
-        tar zcvf ${{github.workspace}}/${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz ${{github.workspace}}/dist
+        cd ${{github.workspace}}/dist
+        tar zcvf ${{github.workspace}}/${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz .
 
     - name: Archive production artifacts
       id: artifact
