@@ -41,6 +41,7 @@ jobs:
         libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev \
         libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
         libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev
+        sudo apt install libfreetype6-dev libharfbuzz-dev
 
     - name: Clone SDL repository
       id: clone-repository
@@ -67,7 +68,7 @@ jobs:
       run: |
         cmake -S ${{github.workspace}}/SDL -B ${{github.workspace}}/SDL/build
         cmake --build ${{github.workspace}}/SDL/build --config Release
-        sudo cmake --install ${{github.workspace}}/SDL/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL/build --config Release --prefix ${{github.workspace}}/dist
       continue-on-error: true
 
     - name: Cmake SDL_image
@@ -75,7 +76,7 @@ jobs:
       run: |
         cmake -S ${{github.workspace}}/SDL_image -B ${{github.workspace}}/SDL_image/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLIMAGE_AVIF=OFF
         cmake --build ${{github.workspace}}/SDL_image/build --config Release
-        sudo cmake --install ${{github.workspace}}/SDL_image/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_image/build --config Release --prefix ${{github.workspace}}/dist
       continue-on-error: true
 
     - name: Cmake SDL_mixer
@@ -83,7 +84,7 @@ jobs:
       run: |
         cmake -S ${{github.workspace}}/SDL_mixer -B ${{github.workspace}}/SDL_mixer/build -DSDL3_DIR=${{github.workspace}}/SDL/build
         cmake --build ${{github.workspace}}/SDL_mixer/build --config Release
-        sudo cmake --install ${{github.workspace}}/SDL_mixer/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_mixer/build --config Release --prefix ${{github.workspace}}/dist
       continue-on-error: true
 
     - name: Cmake SDL_net
@@ -91,7 +92,7 @@ jobs:
       run: |
         cmake -S ${{github.workspace}}/SDL_net -B ${{github.workspace}}/SDL_net/build -DSDL3_DIR=${{github.workspace}}/SDL/build
         cmake --build ${{github.workspace}}/SDL_net/build --config Release
-        sudo cmake --install ${{github.workspace}}/SDL_net/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_net/build --config Release --prefix ${{github.workspace}}/dist
       continue-on-error: true
 
     - name: Cmake SDL_ttf
@@ -99,46 +100,58 @@ jobs:
       run: |
         cmake -S ${{github.workspace}}/SDL_ttf -B ${{github.workspace}}/SDL_ttf/build -DSDL3_DIR=${{github.workspace}}/SDL/build
         cmake --build ${{github.workspace}}/SDL_ttf/build --config Release
-        sudo cmake --install ${{github.workspace}}/SDL_ttf/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_ttf/build --config Release --prefix ${{github.workspace}}/dist
       continue-on-error: true
-
-    - name: Copy include
-      id: copy-include
+    
+    - name: Tar test
+      id: tar-test
       run: |
-        mkdir -p ${{github.workspace}}/dist/include/
-        cp -r ${{github.workspace}}/SDL/include ${{github.workspace}}/dist/include/
-        cp -r ${{github.workspace}}/SDL_image/include ${{github.workspace}}/dist/include/
-        cp -r ${{github.workspace}}/SDL_mixer/include ${{github.workspace}}/dist/include/
-        cp -r ${{github.workspace}}/SDL_ttf/include ${{github.workspace}}/dist/include/
-        cp -r ${{github.workspace}}/SDL_net/include ${{github.workspace}}/dist/include/
-      continue-on-error: true
+        tar zcvf ${{github.workspace}}/test.tar.gz ${{github.workspace}}/dist
 
-    - name: Copy dll
-      id: copy-dll
-      run: |
-        mkdir -p ${{github.workspace}}/dist/lib/x64/
-        cp -r ${{github.workspace}}/SDL/build/Release ${{github.workspace}}/dist/lib/x64
-        cp -r ${{github.workspace}}/SDL_image/build/Release ${{github.workspace}}/dist/lib/x64
-        cp -r ${{github.workspace}}/SDL_mixer/build/Release ${{github.workspace}}/dist/lib/x64
-        cp -r ${{github.workspace}}/SDL_net/build/Release ${{github.workspace}}/dist/lib/x64
-        cp -r ${{github.workspace}}/SDL_ttf/build/Release ${{github.workspace}}/dist/lib/x64
-      continue-on-error: true
+    - name: Archive production artifacts
+      id: artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{github.workspace}}/test.tar.gz
+        path: ${{github.workspace}}/test.tar.gz
 
-    - name: Copy dll external x86
-      id: copy-dll-external-x86
-      run: |
-        mkdir -p ${{github.workspace}}/dist/lib/x86/
-        cp -r ${{github.workspace}}/SDL_image/VisualC/external/optional/x86 ${{github.workspace}}/dist/lib/x86
-        cp -r ${{github.workspace}}/SDL_mixer/VisualC/external/optional/x86 ${{github.workspace}}/dist/lib/x86
-      continue-on-error: true
+#    - name: Copy include
+#      id: copy-include
+#      run: |
+#        mkdir -p ${{github.workspace}}/dist/include/
+#        cp -r ${{github.workspace}}/SDL/include ${{github.workspace}}/dist/include/
+#        cp -r ${{github.workspace}}/SDL_image/include ${{github.workspace}}/dist/include/
+#        cp -r ${{github.workspace}}/SDL_mixer/include ${{github.workspace}}/dist/include/
+#        cp -r ${{github.workspace}}/SDL_ttf/include ${{github.workspace}}/dist/include/
+#        cp -r ${{github.workspace}}/SDL_net/include ${{github.workspace}}/dist/include/
+#      continue-on-error: true
+#
+#    - name: Copy dll
+#      id: copy-dll
+#      run: |
+#        mkdir -p ${{github.workspace}}/dist/lib/x64/
+#        cp -r ${{github.workspace}}/SDL/build/Release ${{github.workspace}}/dist/lib/x64
+#        cp -r ${{github.workspace}}/SDL_image/build/Release ${{github.workspace}}/dist/lib/x64
+#        cp -r ${{github.workspace}}/SDL_mixer/build/Release ${{github.workspace}}/dist/lib/x64
+#        cp -r ${{github.workspace}}/SDL_net/build/Release ${{github.workspace}}/dist/lib/x64
+#        cp -r ${{github.workspace}}/SDL_ttf/build/Release ${{github.workspace}}/dist/lib/x64
+#      continue-on-error: true
 
-    - name: Copy dll external x64
-      id: copy-dll-external-x64
-      run: |
-        mkdir -p ${{github.workspace}}/dist/lib/x64/
-        cp -r ${{github.workspace}}/SDL_image/VisualC/external/optional/x64 ${{github.workspace}}/dist/lib/x64
-        cp -r ${{github.workspace}}/SDL_mixer/VisualC/external/optional/x64 ${{github.workspace}}/dist/lib/x64
-      continue-on-error: true
+#    - name: Copy dll external x86
+#      id: copy-dll-external-x86
+#      run: |
+#        mkdir -p ${{github.workspace}}/dist/lib/x86/
+#        cp -r ${{github.workspace}}/SDL_image/VisualC/external/optional/x86 ${{github.workspace}}/dist/lib/x86
+#        cp -r ${{github.workspace}}/SDL_mixer/VisualC/external/optional/x86 ${{github.workspace}}/dist/lib/x86
+#      continue-on-error: true
+#
+#    - name: Copy dll external x64
+#      id: copy-dll-external-x64
+#      run: |
+#        mkdir -p ${{github.workspace}}/dist/lib/x64/
+#        cp -r ${{github.workspace}}/SDL_image/VisualC/external/optional/x64 ${{github.workspace}}/dist/lib/x64
+#        cp -r ${{github.workspace}}/SDL_mixer/VisualC/external/optional/x64 ${{github.workspace}}/dist/lib/x64
+#      continue-on-error: true
 
 #    - name: Copy LICENSE
 #      id: copy-license
