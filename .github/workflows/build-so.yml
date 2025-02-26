@@ -111,12 +111,16 @@ jobs:
 
     - name: Relase
       id: release
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       run: |
         gh release create ${{steps.output-date.outputs.OUTPUT_DATE}} --title ${{steps.output-date.outputs.OUTPUT_DATE}} --notes ""
       continue-on-error: true
 
     - name: Upload
       id: upload
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       run: |
         gh release upload ${{steps.output-date.outputs.OUTPUT_DATE}} ${{github.workspace}}/${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz --clobber
 
