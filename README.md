@@ -1,9 +1,9 @@
-# MSBuild SDL3
+# Build SDL3
 
-Please run `build.bat`.
+Please run `build_cmake.bat`.
 Use git and download the latest source from github.
 Generate a static dlls using Visual Studio 2022 Comunity.
-Compress `dist/lib`, `dist/include`, and `dist/license` folder and store them in the `release` folder.
+Compress `dist/bin`, `dist/include`, and `dist/license` or etc directory and store them in the `release` directory.
 
 or
 
@@ -21,27 +21,31 @@ Build automatically with github actions.
 
 [https://gitforwindows.org/](https://gitforwindows.org/)
 
+### CMake
+
+[https://cmake.org/](https://cmake.org/)
+
 ## 2.Git clone
 
 Type the following command in the shell.
 ```
-git clone https://github.com/sansuido/msbuild-sdl3
+git clone https://github.com/sansuido/build-sdl3
 ```
 or
 
 Download ZIP, and unzip.
 
-## 3.Change Directory & build
+## 3.Change Directory& build
 
 ```
-cd msbuild-sdl3
-build.bat
+cd build-sdl3
+build_cmake.bat
 ```
 or 
 
-Double click `build.bat`
+Double click `build_cmake.bat`
 
-If successful, a zip file will be generated in the `release` folder.
+If successful, a zip file will be generated in the `release` directory.
 
 # Author
 

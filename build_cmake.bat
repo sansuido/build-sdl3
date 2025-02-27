@@ -1,4 +1,3 @@
-rem call "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars32.bat"
 
 if exist "dist" (
   rmdir dist /s /q
@@ -8,19 +7,15 @@ if exist "SDL3" (
 )
 mkdir SDL3
 
-call build_cmake_to SDL SDL3
+call build_cmake_to SDL
 
-call build_cmake_to SDL_image SDL3_image
+call build_cmake_to SDL_image
 
-call build_cmake_to SDL_mixer SDL3_mixer
+call build_cmake_to SDL_mixer
 
-call build_cmake_to SDL_ttf SDL3_ttf
+call build_cmake_to SDL_ttf
 
-call build_cmake_to SDL_net SDL3_net
-
-call build_cmake_to SDL_rtf SDL3_rtf
-
-call build_cmake_to SDL_shadercross SDL_shadercross
+call build_cmake_to SDL_net
 
 if not exist "release" (
   mkdir release
