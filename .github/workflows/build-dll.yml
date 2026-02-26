@@ -57,6 +57,7 @@ jobs:
     - name: Run external ps1
       id: run-external-ps1
       run: |
+        powershell ${{github.workspace}}/SDL_shadercross/external/Get-GitModules.ps1
         powershell ${{github.workspace}}/SDL_image/external/Get-GitModules.ps1
         powershell ${{github.workspace}}/SDL_mixer/external/Get-GitModules.ps1
         powershell ${{github.workspace}}/SDL_ttf/external/Get-GitModules.ps1

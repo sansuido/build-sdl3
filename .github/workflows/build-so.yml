@@ -59,6 +59,7 @@ jobs:
     - name: Run external download
       id: run-external-download
       run: |
+        ${{github.workspace}}/SDL_shadercross/external/download.sh
         ${{github.workspace}}/SDL_image/external/download.sh
         ${{github.workspace}}/SDL_mixer/external/download.sh
         ${{github.workspace}}/SDL_ttf/external/download.sh
@@ -66,7 +67,7 @@ jobs:
     - name: Cmake SDL
       id: cmake-sdl
       run: |
-        cmake -S ${{github.workspace}}/SDL -B ${{github.workspace}}/SDL/build
+        cmake -S ${{github.workspace}}/SDL -B ${{github.workspace}}/SDL/build -DSDL_X11_XTEST=OFF
         cmake --build ${{github.workspace}}/SDL/build --config Release
         sudo cmake --install ${{github.workspace}}/SDL/build --config Release --prefix ${{github.workspace}}/dist
 
