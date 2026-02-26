@@ -18,8 +18,8 @@ jobs:
     steps:
     - name: Checkout
       id: checkput
-      uses: actions/checkout@v3
-    
+      uses: actions/checkout@v4
+      
     - name: Set output date as output variable
       id: output-date
       run: |
@@ -32,6 +32,11 @@ jobs:
         echo "${{steps.output-date.outputs.OUTPUT_DATE}}"
         echo "${{steps.output-date.outputs.OUTPUT_DATETIME}}"
 
+    - name: Set up python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
     - name: Add MSBuild to PATH
       id: msbuild-path
       uses: microsoft/setup-msbuild@v1.1
@@ -43,6 +48,7 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_shadercross.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_image.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_mixer.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_net.git
@@ -61,6 +67,13 @@ jobs:
         cmake -S ${{github.workspace}}/SDL -B ${{github.workspace}}/SDL/build
         cmake --build ${{github.workspace}}/SDL/build --config Release
         cmake --install ${{github.workspace}}/SDL/build --config Release --prefix ${{github.workspace}}/dist
+    
+    - name: Cmake SDL_shadercross
+      id: cmake-sdl-shadercross
+      run: |
+        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build
+        cmake --build ${{github.workspace}}/SDL_shadercross/build --config Release
+        cmake --install ${{github.workspace}}/SDL_shadercross/build --config Release --prefix ${{github.workspace}}/dist
 
     - name: Cmake SDL_image
       id: cmake-sdl-image

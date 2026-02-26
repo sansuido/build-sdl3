@@ -50,6 +50,7 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_shadercross.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_image.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_mixer.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_net.git
@@ -69,6 +70,13 @@ jobs:
         cmake --build ${{github.workspace}}/SDL/build --config Release
         sudo cmake --install ${{github.workspace}}/SDL/build --config Release --prefix ${{github.workspace}}/dist
 
+    - name: Cmake SDL_shadercross
+      id: cmake-sdl-shadercross
+      run: |
+        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build
+        cmake --build ${{github.workspace}}/SDL_shadercross/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_shadercross/build --config Release --prefix ${{github.workspace}}/dist
+    
     - name: Cmake SDL_image
       id: cmake-sdl-image
       run: |

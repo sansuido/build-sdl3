@@ -1,4 +1,5 @@
-call "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars32.bat"
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build/vcvars32.bat"
+rem call "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars32.bat"
 
 if exist "dist" (
   rmdir dist /s /q
@@ -9,6 +10,8 @@ if exist "SDL3" (
 mkdir SDL3
 
 call build_to SDL
+
+call build_cmake_to SDL_shadercross
 
 call build_to SDL_image
 
