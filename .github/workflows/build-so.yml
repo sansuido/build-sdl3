@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Build SDL3 so
 
 on:
@@ -134,3 +135,133 @@ jobs:
       run: |
         gh release upload ${{steps.output-date.outputs.OUTPUT_DATE}} ${{github.workspace}}/SDL3-${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz --clobber
 
+=======
+name: Build SDL3 so
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      id: checkput
+      uses: actions/checkout@v3
+    
+    - name: Set output date as output variable
+      id: output-date
+      run: |
+        echo "OUTPUT_DATE=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+        echo "OUTPUT_DATETIME=$(date +'%Y-%m-%d %H:%M:%S')" >> "$GITHUB_OUTPUT"
+    
+    - name: Show output date
+      id: echo-output-date
+      run: |
+        echo "${{steps.output-date.outputs.OUTPUT_DATE}}"
+        echo "${{steps.output-date.outputs.OUTPUT_DATETIME}}"
+ 
+    - name: Add library
+      id: add-library
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential git make \
+        pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+        libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
+        libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev \
+        libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+        libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev
+        sudo apt install libfreetype6-dev libharfbuzz-dev
+
+    - name: Clone SDL repository
+      id: clone-repository
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      working-directory: ${{github.workspace}}
+      run: |
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_image.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_mixer.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_net.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_ttf.git
+
+    - name: Run external download
+      id: run-external-download
+      run: |
+        ${{github.workspace}}/SDL_image/external/download.sh
+        ${{github.workspace}}/SDL_mixer/external/download.sh
+        ${{github.workspace}}/SDL_ttf/external/download.sh
+    
+    - name: Cmake SDL
+      id: cmake-sdl
+      run: |
+        cmake -S ${{github.workspace}}/SDL -B ${{github.workspace}}/SDL/build -DSDL_X11_XTEST=OFF
+        cmake --build ${{github.workspace}}/SDL/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL/build --config Release --prefix ${{github.workspace}}/dist
+
+    - name: Cmake SDL_image
+      id: cmake-sdl-image
+      run: |
+        cmake -S ${{github.workspace}}/SDL_image -B ${{github.workspace}}/SDL_image/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLIMAGE_AVIF=OFF
+        cmake --build ${{github.workspace}}/SDL_image/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_image/build --config Release --prefix ${{github.workspace}}/dist
+
+    - name: Cmake SDL_mixer
+      id: cmake-sdl-mixer
+      run: |
+        cmake -S ${{github.workspace}}/SDL_mixer -B ${{github.workspace}}/SDL_mixer/build -DSDL3_DIR=${{github.workspace}}/SDL/build
+        cmake --build ${{github.workspace}}/SDL_mixer/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_mixer/build --config Release --prefix ${{github.workspace}}/dist
+
+    - name: Cmake SDL_net
+      id: cmake-sdl-net
+      run: |
+        cmake -S ${{github.workspace}}/SDL_net -B ${{github.workspace}}/SDL_net/build -DSDL3_DIR=${{github.workspace}}/SDL/build
+        cmake --build ${{github.workspace}}/SDL_net/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_net/build --config Release --prefix ${{github.workspace}}/dist
+
+    - name: Cmake SDL_ttf
+      id: cmake-sdl-ttf
+      run: |
+        cmake -S ${{github.workspace}}/SDL_ttf -B ${{github.workspace}}/SDL_ttf/build -DSDL3_DIR=${{github.workspace}}/SDL/build
+        cmake --build ${{github.workspace}}/SDL_ttf/build --config Release
+        sudo cmake --install ${{github.workspace}}/SDL_ttf/build --config Release --prefix ${{github.workspace}}/dist
+    
+    - name: Tar
+      id: tar
+      run: |
+        cd ${{github.workspace}}/dist
+        tar zcvf ${{github.workspace}}/SDL3-${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz .
+
+#    - name: Archive production artifacts
+#      id: artifact
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: ${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz
+#        path: ${{github.workspace}}/SDL3-${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz
+
+    - name: Relase
+      id: release
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      run: |
+        gh release create ${{steps.output-date.outputs.OUTPUT_DATE}} --title ${{steps.output-date.outputs.OUTPUT_DATE}} --notes ""
+      continue-on-error: true
+
+    - name: Upload
+      id: upload
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      run: |
+        gh release upload ${{steps.output-date.outputs.OUTPUT_DATE}} ${{github.workspace}}/SDL3-${{steps.output-date.outputs.OUTPUT_DATE}}.tar.gz --clobber
+
+>>>>>>> 32691ce4dd02fd45c505f9140a8811fdac333bbb
