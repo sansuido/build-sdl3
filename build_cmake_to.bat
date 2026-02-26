@@ -14,7 +14,7 @@ if exist %1 (
     chdir ..
   ) 
   rem build
-  cmake -S . -B build -DSDL3_DIR=../SDL/build -DSDLIMAGE_AVIF=OFF
+  cmake -S . -B build -DSDL3_DIR=../SDL/build -DSDLIMAGE_AVIF=OFF -DSDLSHADERCROSS_VENDORED=ON
   cmake --build build --config Release
   cmake --install build --config Release --prefix ../../dist
   chdir ..

@@ -72,13 +72,7 @@ jobs:
     - name: Cmake SDL_shadercross
       id: cmake-sdl-shadercross
       run: |
-        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build `
-        -DSDL3_DIR=${{github.workspace}}/dist `
-        -DSDL_SHADERCROSS_VULKAN=ON `
-        -DSDL_SHADERCROSS_SPIRV_CROSS=ON `
-        -DSDL_SHADERCROSS_DXC=ON `
-        -Dspirv_cross_c_shared_DIR=${{github.workspace}}/SDL_shadercross/external/SPIRV-Cross `
-        -DSPIRV-Headers_DIR=${{github.workspace}}/SDL_shadercross/external/SPIRV-Headers
+        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLSHADERCROSS_VENDORED=ON
         cmake --build ${{github.workspace}}/SDL_shadercross/build --config Release
         cmake --install ${{github.workspace}}/SDL_shadercross/build --config Release --prefix ${{github.workspace}}/dist
     
