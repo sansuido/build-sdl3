@@ -48,19 +48,19 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL.git
-        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_shadercross.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_image.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_mixer.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_net.git
         git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_ttf.git
+        git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/libsdl-org/SDL_shadercross.git
 
     - name: Run external ps1
       id: run-external-ps1
       run: |
-        powershell ${{github.workspace}}/SDL_shadercross/external/Get-GitModules.ps1
         powershell ${{github.workspace}}/SDL_image/external/Get-GitModules.ps1
         powershell ${{github.workspace}}/SDL_mixer/external/Get-GitModules.ps1
         powershell ${{github.workspace}}/SDL_ttf/external/Get-GitModules.ps1
+        powershell ${{github.workspace}}/SDL_shadercross/external/Get-GitModules.ps1
     
     - name: Cmake SDL
       id: cmake-sdl
@@ -68,13 +68,6 @@ jobs:
         cmake -S ${{github.workspace}}/SDL -B ${{github.workspace}}/SDL/build
         cmake --build ${{github.workspace}}/SDL/build --config Release
         cmake --install ${{github.workspace}}/SDL/build --config Release --prefix ${{github.workspace}}/dist
-    
-    - name: Cmake SDL_shadercross
-      id: cmake-sdl-shadercross
-      run: |
-        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLSHADERCROSS_VENDORED=ON -DBUILD_SHARED_LIBS=ON
-        cmake --build ${{github.workspace}}/SDL_shadercross/build --config Release
-        cmake --install ${{github.workspace}}/SDL_shadercross/build --config Release --prefix ${{github.workspace}}/dist
     
     - name: Cmake SDL_image
       id: cmake-sdl-image
@@ -104,6 +97,18 @@ jobs:
         cmake --build ${{github.workspace}}/SDL_ttf/build --config Release
         cmake --install ${{github.workspace}}/SDL_ttf/build --config Release --prefix ${{github.workspace}}/dist
 
+    - name: Cmake SDL_shadercross
+      id: cmake-sdl-shadercross
+      run: |
+        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLSHADERCROSS_VENDORED=ON -DBUILD_SHARED_LIBS=ON
+        cmake --build ${{github.workspace}}/SDL_shadercross/build --config Release
+        robocopy ${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Tools/source/Release/* ${{github.workspace}}/dist/lib /E /ZB /COPYALL /R:0 /W:0; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+        robocopy ${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Tools/source/opt/Release/* ${{github.workspace}}/dist/lib /E /ZB /COPYALL /R:0 /W:0; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+        robocopy ${{github.workspace}}/SDL_shadercross/build/external/DirectXShaderCompiler/Release/bin/* ${{github.workspace}}/dist/bin /E /ZB /COPYALL /R:0 /W:0; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+        robocopy ${{github.workspace}}/SDL_shadercross/build/external/DirectXShaderCompiler/Release/lib/* ${{github.workspace}}/dist/lib /E /ZB /COPYALL /R:0 /W:0; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+        robocopy ${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Cross/Release/* ${{github.workspace}}/dist/bin /E /ZB /COPYALL /R:0 /W:0; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+        robocopy ${{github.workspace}}/SDL_shadercross/build/Release/* ${{github.workspace}}/dist/bin /E /ZB /COPYALL /R:0 /W:0; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
+    
     - name: Zip
       id: zip
       run: powershell compress-archive ${{github.workspace}}/dist/* ${{github.workspace}}/SDL3-${{steps.output-date.outputs.OUTPUT_DATE}} -Force
