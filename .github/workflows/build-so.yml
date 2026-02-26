@@ -74,7 +74,7 @@ jobs:
     - name: Cmake SDL_shadercross
       id: cmake-sdl-shadercross
       run: |
-        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLSHADERCROSS_VENDORED=ON
+        cmake -S ${{github.workspace}}/SDL_shadercross -B ${{github.workspace}}/SDL_shadercross/build -DSDL3_DIR=${{github.workspace}}/SDL/build -DSDLSHADERCROSS_VENDORED=ON -DBUILD_SHARED_LIBS=ON
         cmake --build ${{github.workspace}}/SDL_shadercross/build --config Release
         sudo cmake --install ${{github.workspace}}/SDL_shadercross/build --config Release --prefix ${{github.workspace}}/dist
     
