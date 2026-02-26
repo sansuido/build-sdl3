@@ -106,12 +106,13 @@ jobs:
             robocopy $args
             if ($LASTEXITCODE -lt 8) { $global:LASTEXITCODE = 0 }
         }
-        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Tools/source/Release" "${{github.workspace}}/dist/lib" /E /ZB /COPYALL /R:0 /W:0
-        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Tools/source/opt/Release" "${{github.workspace}}/dist/lib" /E /ZB /COPYALL /R:0 /W:0
-        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/DirectXShaderCompiler/Release/bin" "${{github.workspace}}/dist/bin" /E /ZB /COPYALL /R:0 /W:0
-        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/DirectXShaderCompiler/Release/lib" "${{github.workspace}}/dist/lib" /E /ZB /COPYALL /R:0 /W:0
-        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Cross/Release" "${{github.workspace}}/dist/bin" /E /ZB /COPYALL /R:0 /W:0
-        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/Release" "${{github.workspace}}/dist/bin" /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/DirectXShaderCompiler/Release/bin" "${{github.workspace}}/dist/bin" *.exe *.dll /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Cross/Release"               "${{github.workspace}}/dist/bin" *.exe *.dll /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/Release"                                    "${{github.workspace}}/dist/bin" *.exe *.dll /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/DirectXShaderCompiler/Release/lib" "${{github.workspace}}/dist/lib" *.lib /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Tools/source/opt/Release"    "${{github.workspace}}/dist/lib" *.lib /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/external/SPIRV-Tools/source/Release"        "${{github.workspace}}/dist/lib" *.lib /E /ZB /COPYALL /R:0 /W:0
+        Safe-Robocopy "${{github.workspace}}/SDL_shadercross/build/Release"                                    "${{github.workspace}}/dist/lib" *.lib /E /ZB /COPYALL /R:0 /W:0
     
     - name: Zip
       id: zip
